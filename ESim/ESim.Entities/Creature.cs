@@ -28,6 +28,7 @@ namespace ESim.Entities
             var texturePosition = this.Position * Configuration.CreatureTextureSize;
 
             spriteBatch.Draw(Configuration.DefaultCreatureTexture, texturePosition.ToVector2(), Color.White);
+            spriteBatch.DrawString(Configuration.DefaultApplicationFont, this.Dna.ToString(), texturePosition.ToVector2(), Color.White);
         }
 
         public bool WillHaveChild()

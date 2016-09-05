@@ -1,6 +1,7 @@
 ﻿using ESim.Config;
 using ESim.Entities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -44,8 +45,7 @@ namespace Esim.MonoGame
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(this.GraphicsDevice);
-
-            Configuration.LoadContent(this.GraphicsDevice);
+            Configuration.LoadContent(this.GraphicsDevice, this.Content);
 
             // use this.Content to load your game content here
         }
@@ -73,7 +73,7 @@ namespace Esim.MonoGame
 
             // Add your update logic here
 
-            //this.world.Update(gameTime);
+            this.world.Update(gameTime);
 
             base.Update(gameTime);
         }

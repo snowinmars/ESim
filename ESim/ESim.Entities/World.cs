@@ -84,7 +84,7 @@ namespace ESim.Entities
 
         private void ProcessQueue()
         {
-            while (this.creatureReproductionQueue.Count != 0)
+            while (this.creatureReproductionQueue.Count > 2)
             {
                 Creature father = this.creatureReproductionQueue.Dequeue();
                 Creature mother = this.creatureReproductionQueue.Dequeue();
@@ -96,17 +96,25 @@ namespace ESim.Entities
                 {
                     this.creatureReproductionQueue.Enqueue(father);
                 }
+                else
+                {
+                    this.Creatures.Remove(father);
+                }
 
                 if (mother.WillHaveChild())
                 {
                     this.creatureReproductionQueue.Enqueue(mother);
+                }
+                else
+                {
+                    this.Creatures.Remove(mother);
                 }
             }
         }
 
         private static Creature MakeChild(Creature mother, Creature father)
         {
-            return null;
+            return new Creature(mother.Position);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
