@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
 using ESim.Config;
@@ -69,17 +70,46 @@ namespace ESim.Entities
 
         public void Update(GameTime gameTime)
         {
-            foreach (var creature in this.Creatures)
+            this.DestroySomeCreatures();
+
+            this.FillQueue();
+
+            this.ProcessQueue();
+
+            this.FillSpace();
+        }
+
+        private void FillQueue()
+        {
+            foreach (var creature in this.Creatures.Where(creature => creature.IsAlive))
             {
                 creature.Mutate();
 
-                if (creature.WillHaveChild())
+                if (creature.WillHaveChild() && this.Creatures.Any(c => !c.IsAlive))
                 {
                     this.QueueChild(creature);
                 }
             }
+        }
 
-            this.ProcessQueue();
+        private void DestroySomeCreatures()
+        {
+            for (int i = 0; i < Configuration.KillCount; i++)
+            {
+                int rand = CommonValues.Random.Next(0, this.Creatures.Count - 1);
+
+                this.Creatures[rand].Kill();
+            }
+        }
+
+        private void FillSpace()
+        {
+            IEnumerable<Creature> creatures = this.Creatures.Where(creature => !creature.IsAlive);
+
+            foreach (var creature in creatures)
+            {
+                creature.Spawn();
+            }
         }
 
         private void ProcessQueue()
@@ -88,33 +118,40 @@ namespace ESim.Entities
             {
                 Creature father = this.creatureReproductionQueue.Dequeue();
                 Creature mother = this.creatureReproductionQueue.Dequeue();
-
                 Creature child = World.MakeChild(mother, father);
-                this.Creatures.Add(child);
 
-                if (father.WillHaveChild())
+                var a = this.Creatures.First(c => !c.IsAlive);
+                a.Dna = child.Dna;
+                a.Spawn();
+
+                if (!father.WillHaveChild())
                 {
-                    this.creatureReproductionQueue.Enqueue(father);
-                }
-                else
-                {
-                    this.Creatures.Remove(father);
+                    father.Kill();
                 }
 
-                if (mother.WillHaveChild())
+                if (!mother.WillHaveChild())
                 {
-                    this.creatureReproductionQueue.Enqueue(mother);
-                }
-                else
-                {
-                    this.Creatures.Remove(mother);
+                    mother.Kill();
                 }
             }
         }
 
         private static Creature MakeChild(Creature mother, Creature father)
         {
-            return new Creature(mother.Position);
+            var child = new Creature(mother.Position);
+
+            child.Dna = new Dna();
+
+            for (int i = 0; i < child.Dna.Values.Length; i++)
+            {
+                child.Dna.Values[i] = mother.Dna.Values[i] & father.Dna.Values[i];
+            }
+
+            child.RefreshColor();
+
+            child.IsAlive = true;
+
+            return child;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -125,9 +162,9 @@ namespace ESim.Entities
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(Configuration.DefaultWorldTexture, Vector2.Zero, Color.White);
+            spriteBatch.Draw(Configuration.DefaultWorldTexture, Vector2.Zero, this.Color);
 
-            foreach (var creature in this.Creatures)
+            foreach (var creature in this.Creatures.Where(creature => creature.IsAlive))
             {
                 creature.Draw(gameTime, spriteBatch);
             }

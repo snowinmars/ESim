@@ -1,4 +1,5 @@
-﻿using ESim.Config;
+﻿using System;
+using ESim.Config;
 using ESim.Entities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
@@ -61,6 +62,8 @@ namespace Esim.MonoGame
             Configuration.UnloadContent();
         }
 
+        private TimeSpan previousGameTime;
+
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -73,7 +76,15 @@ namespace Esim.MonoGame
 
             // Add your update logic here
 
-            this.world.Update(gameTime);
+            if (this.previousGameTime > Configuration.UpdateTime)
+            {
+                this.previousGameTime = TimeSpan.Zero;
+                this.world.Update(gameTime);
+            }
+            else
+            {
+                this.previousGameTime += gameTime.ElapsedGameTime;
+            }
 
             base.Update(gameTime);
         }

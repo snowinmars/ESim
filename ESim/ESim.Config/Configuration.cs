@@ -13,23 +13,23 @@ namespace ESim.Config
 {
     public static class Configuration
     {
-        public static int DnaSize { get; } = 16;
+        public static int DnaSize { get; } = 24;
         public static Position WorldSize { get; } = new Position(4, 4);
-        public static Position CreatureTextureSize { get; } = new Position(120, 40);
-        public static Position WorldTextureSize { get; } = new Position(600, 200);
+        public static Position CreatureTextureSize { get; } = new Position(200, 40);
+        public static Position WorldTextureSize { get; } = new Position(800, 200);
 
         public static Texture2D DefaultCreatureTexture { get; private set; }
         public static Texture2D DefaultWorldTexture { get; private set; }
 
         public static SpriteFont DefaultApplicationFont { get; private set; }
+        public static int KillCount { get; } = 4;
+        public static TimeSpan UpdateTime { get;  } = new TimeSpan(1000);
 
         public static void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
             Configuration.DefaultCreatureTexture = graphicsDevice.Generate(Configuration.CreatureTextureSize.X,
                                                                             Configuration.CreatureTextureSize.Y,
-                                                                            Color.Black,
-                                                                            1,
-                                                                            Color.Azure);
+                                                                            Color.White);
 
             Configuration.DefaultWorldTexture = graphicsDevice.Generate(Configuration.WorldTextureSize.X,
                                                             Configuration.WorldTextureSize.Y,
