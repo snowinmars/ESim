@@ -33,7 +33,7 @@ namespace Esim.MonoGame
         {
             // Add your initialization logic here
 
-            this.world = new World(new Color(0,255,255));
+            this.world = new World(new Color(128,128,128));
 
             base.Initialize();
         }
@@ -76,7 +76,7 @@ namespace Esim.MonoGame
 
             // Add your update logic here
 
-            if (this.previousGameTime > Configuration.UpdateTime)
+            if (true || this.previousGameTime > Configuration.UpdateTime)
             {
                 this.previousGameTime = TimeSpan.Zero;
                 this.world.Update(gameTime);

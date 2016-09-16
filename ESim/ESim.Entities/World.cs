@@ -6,12 +6,14 @@ using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
+using System.Text;
 using System.Threading;
 using ESim.Config;
 using Mathos.Converter;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SandS.Algorithm.CommonNamespace;
+using SandS.Algorithm.Library.BitwiseNamespace;
 using SandS.Algorithm.Library.PositionNamespace;
 
 namespace ESim.Entities
@@ -24,7 +26,7 @@ namespace ESim.Entities
             int dG = lhs.G - rhs.G;
             int dB = lhs.B - rhs.B;
 
-            return Math.Sqrt(dR * dR * 0.2126 + dG * dG * 0.7152 + dB * dB * 0.0722);
+            return Math.Sqrt(dR * dR + dG * dG + dB * dB );
         }
     }
 
@@ -118,20 +120,12 @@ namespace ESim.Entities
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Position GetPosition(int i)
         {
-            string a = i.From(Base.Base10).To(Base.Base4);
+            Position pos = new Position();
 
-            if (a.Length == 1)
-            {
-                a = "0" + a;
-            }
+            pos.X = i/Configuration.WorldSize.X;
+            pos.Y = i%Configuration.WorldSize.X;
 
-            char l = a[0];
-            char r = a[1];
-
-            int x = Int32.Parse(new string(l, 1));
-            int y = Int32.Parse(new string(r, 1));
-
-            return new Position(x, y);
+            return pos;
         }
 
         public Position Size { get; set; }
@@ -170,6 +164,8 @@ namespace ESim.Entities
 
             foreach (var creature in creatures)
             {
+                creature.Dna.Reset();
+                creature.RefreshColor();
                 creature.Spawn();
             }
         }
@@ -180,12 +176,25 @@ namespace ESim.Entities
             {
                 Creature father = this.creatureReproductionQueue.Dequeue();
                 Creature mother = this.creatureReproductionQueue.Dequeue();
-                Creature child = World.MakeChild(mother, father);
+                for (int i = 0; i < Configuration.HowManyChildren; i++)
+                {
+                    Creature child = World.MakeChild(mother, father);
 
-                var firstDead = this.Creatures.First(c => !c.IsAlive);
-                firstDead.Dna = child.Dna;
-                firstDead.Spawn();
-                firstDead.RefreshColor();
+                    child.Mutate();
+                    child.Mutate();
+                    child.Mutate();
+
+                    var firstDead = this.Creatures.FirstOrDefault(c => !c.IsAlive);
+
+                    if (firstDead == null)
+                    {
+                        return;
+                    }
+
+                    firstDead.Dna = child.Dna;
+                    firstDead.Spawn();
+                    firstDead.RefreshColor();
+                }
 
                 if (!father.WillHaveChild())
                 {
@@ -207,7 +216,7 @@ namespace ESim.Entities
 
             for (int i = 0; i < child.Dna.Values.Length; i++)
             {
-                child.Dna.Values[i] = mother.Dna.Values[i] | father.Dna.Values[i];
+                child.Dna.Values[i] = mother.Dna.Values[i] & father.Dna.Values[i];
             }
 
             child.RefreshColor();

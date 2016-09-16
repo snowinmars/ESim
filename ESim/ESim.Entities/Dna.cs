@@ -27,5 +27,13 @@ namespace ESim.Entities
 
             return sb.ToString();
         }
+
+        public void Reset()
+        {
+            for (int i = 0; i < this.Values.Length; i++)
+            {
+                this.Values[i] = false;
+            }
+        }
     }
 }
