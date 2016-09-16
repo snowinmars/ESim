@@ -33,7 +33,7 @@ namespace Esim.MonoGame
         {
             // Add your initialization logic here
 
-            this.world = new World(new Color(128,128,128));
+            this.world = new World(Configuration.WorldColor);
 
             base.Initialize();
         }

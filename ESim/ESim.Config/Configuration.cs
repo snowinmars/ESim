@@ -28,6 +28,7 @@ namespace ESim.Config
             public int WillOrganismMutateMax { get; set; }
             public int WillHaveChildMax { get; set; }
             public int HowManyChildren { get; set; }
+            public Color WorldColor { get; set; }
         }
 
         static Configuration()
@@ -48,8 +49,11 @@ namespace ESim.Config
                 Configuration.WillOrganismMutateMax = c.WillOrganismMutateMax;
                 Configuration.WillHaveChildMax = c.WillHaveChildMax;
                 Configuration.HowManyChildren = c.HowManyChildren;
+                Configuration.WorldColor = c.WorldColor;
             }
         }
+
+        public static Color WorldColor { get; }
 
         public static int DnaSize { get; }
         public static Position WorldSize { get; } 
