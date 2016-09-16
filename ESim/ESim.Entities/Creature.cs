@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SandS.Algorithm.CommonNamespace;
 using SandS.Algorithm.Library.PositionNamespace;
+using SandS.Algorithm.Library.BitwiseNamespace;
 
 namespace ESim.Entities
 {
@@ -49,7 +50,7 @@ namespace ESim.Entities
 
         public bool WillHaveChild()
         {
-            return CommonValues.Random.Next(0, 4) == 0;
+            return CommonValues.Random.Next(0, Configuration.WillHaveChildMax) == 0;
         }
 
         public void Mutate()
@@ -59,58 +60,40 @@ namespace ESim.Entities
                 return;
             }
 
-            bool[] nucleotides = this.Dna.Values;
             bool was = false;
 
-            for (int i = 0; i < nucleotides.Length; i++)
+            for (int i = 0; i < this.Dna.Values.Length; i++)
             {
                 if (this.WillNucleotideMutate())
                 {
-                    nucleotides[i] = !nucleotides[i];
+                    this.Dna.Values[i] = !this.Dna.Values[i];
                     was = true;
                 }
             }
 
-            this.RefreshColor();
+            if (was)
+            {
+                this.RefreshColor();
+            }
         }
 
         internal void RefreshColor()
         {
-            int r = 0;
-
-            for (int i = 0; i < 8; i++)
-            {
-                int v = this.Dna.Values[i] ? 1 : 0;
-                r += v * (2 ^ i);
-            }
-
-            int g = 0;
-
-            for (int i = 0; i < 8; i++)
-            {
-                int v = this.Dna.Values[i + 8] ? 1 : 0;
-                g += v * (2 ^ i);
-            }
-
-            int b = 0;
-
-            for (int i = 0; i < 8; i++)
-            {
-                int v = this.Dna.Values[i + 16] ? 1 : 0;
-                b += v * (2 ^ i);
-            }
+            int r = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Take(8).ToArray());
+            int g = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(8).Take(8).ToArray());
+            int b = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(16).Take(8).ToArray());
 
             this.Color = new Color(r, g, b, 255);
         }
 
         private bool WillNucleotideMutate()
         {
-            return CommonValues.Random.Next(0, 36) == 0;
+            return CommonValues.Random.Next(0, Configuration.WillNucleotideMutateMax) == 0;
         }
 
         private bool WillOrganismMutate()
         {
-            return CommonValues.Random.Next(0, 16) == 0;
+            return CommonValues.Random.Next(0, Configuration.WillOrganismMutateMax) == 0;
         }
     }
 }

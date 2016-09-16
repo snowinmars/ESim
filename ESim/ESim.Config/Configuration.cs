@@ -22,8 +22,11 @@ namespace ESim.Config
         public static Texture2D DefaultWorldTexture { get; private set; }
 
         public static SpriteFont DefaultApplicationFont { get; private set; }
-        public static int KillCount { get; } = 4;
+        public static int KillCount { get; } = 12;
         public static TimeSpan UpdateTime { get;  } = new TimeSpan(1000);
+        public static int WillNucleotideMutateMax { get; set; } = 36;
+        public static int WillOrganismMutateMax { get; set; } = 16;
+        public static int WillHaveChildMax { get; set; } = 4;
 
         public static void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {

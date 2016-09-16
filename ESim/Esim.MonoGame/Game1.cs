@@ -33,7 +33,7 @@ namespace Esim.MonoGame
         {
             // Add your initialization logic here
 
-            this.world = new World();
+            this.world = new World(new Color(0,255,255));
 
             base.Initialize();
         }
@@ -95,7 +95,7 @@ namespace Esim.MonoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            this.GraphicsDevice.Clear(Color.CornflowerBlue);
+            
 
             // Add your drawing code here
 

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Channels;
+using System.Threading;
 using ESim.Config;
 using Mathos.Converter;
 using Microsoft.Xna.Framework;
@@ -13,12 +16,81 @@ using SandS.Algorithm.Library.PositionNamespace;
 
 namespace ESim.Entities
 {
+    public static class ColorComparer
+    {
+        public static double Compare(Color lhs, Color rhs)
+        {
+            int dR = lhs.R - rhs.R;
+            int dG = lhs.G - rhs.G;
+            int dB = lhs.B - rhs.B;
+
+            return Math.Sqrt(dR * dR * 0.2126 + dG * dG * 0.7152 + dB * dB * 0.0722);
+        }
+    }
+
+    public static class A
+    {
+        public static T ClosestTo<T>(this IList<T> inputCollection, T target)
+            where T : IComparable
+        {
+            T closest = default(T);
+            int minDifference = int.MaxValue;
+            foreach (var element in inputCollection)
+            {
+                int difference = element.CompareTo(target);
+
+                if (minDifference > difference)
+                {
+                    minDifference = (int)difference;
+                    closest = element;
+                }
+            }
+
+            return closest;
+        }
+
+        public static KeyValuePair<T, int> ClosestTo<T>(this IList<T> inputCollection, T target, IComparer<T> comparer)
+        {
+            T closest = default(T);
+            int minDifference = int.MaxValue;
+
+            int pos = 0;
+
+            for (int i = 0; i < inputCollection.Count; i++)
+            {
+                T element = inputCollection[i];
+
+                int difference = comparer.Compare(element, target);
+
+                if (minDifference > difference)
+                {
+                    minDifference = (int) difference;
+                    closest = element;
+                    pos = i;
+                }
+            }
+
+            return new KeyValuePair<T, int>(closest, pos);
+        }
+    }
+
     public class World
     {
+        private void DestroySomeCreatures()
+        {
+            var oc = this.Creatures.OrderBy(c => ColorComparer.Compare(this.Color, c.Color)).ToList();
+
+            for (int i = this.Creatures.Count - 1; i > this.Creatures.Count - Configuration.KillCount; i--)
+            {
+                oc[i].Kill();
+            }
+        }
+
         private readonly Queue<Creature> creatureReproductionQueue;
 
-        public World()
+        public World(Color color)
         {
+            this.Color = color;
             this.Size = Configuration.WorldSize;
 
             this.Creatures = this.InitCreatures();
@@ -85,20 +157,10 @@ namespace ESim.Entities
             {
                 creature.Mutate();
 
-                if (creature.WillHaveChild() && this.Creatures.Any(c => !c.IsAlive))
+                if (this.Creatures.Any(c => !c.IsAlive))
                 {
                     this.QueueChild(creature);
                 }
-            }
-        }
-
-        private void DestroySomeCreatures()
-        {
-            for (int i = 0; i < Configuration.KillCount; i++)
-            {
-                int rand = CommonValues.Random.Next(0, this.Creatures.Count - 1);
-
-                this.Creatures[rand].Kill();
             }
         }
 
@@ -120,9 +182,10 @@ namespace ESim.Entities
                 Creature mother = this.creatureReproductionQueue.Dequeue();
                 Creature child = World.MakeChild(mother, father);
 
-                var a = this.Creatures.First(c => !c.IsAlive);
-                a.Dna = child.Dna;
-                a.Spawn();
+                var firstDead = this.Creatures.First(c => !c.IsAlive);
+                firstDead.Dna = child.Dna;
+                firstDead.Spawn();
+                firstDead.RefreshColor();
 
                 if (!father.WillHaveChild())
                 {
@@ -144,7 +207,7 @@ namespace ESim.Entities
 
             for (int i = 0; i < child.Dna.Values.Length; i++)
             {
-                child.Dna.Values[i] = mother.Dna.Values[i] & father.Dna.Values[i];
+                child.Dna.Values[i] = mother.Dna.Values[i] | father.Dna.Values[i];
             }
 
             child.RefreshColor();
