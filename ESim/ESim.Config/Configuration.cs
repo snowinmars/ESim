@@ -16,7 +16,7 @@ namespace ESim.Config
 
     public static class Configuration
     {
-        private class ConfigurationInstance
+        public class ConfigurationInstance
         {
             public int DnaSize { get; set; }
             public Position WorldSize { get; set; }
@@ -36,40 +36,40 @@ namespace ESim.Config
             using (StreamReader reader = new StreamReader(@"cfg\esim.cfg"))
             {
                 string str = reader.ReadToEnd();
-
                 ConfigurationInstance c = JsonConvert.DeserializeObject<ConfigurationInstance>(str);
-
-                Configuration.DnaSize = c.DnaSize;
-                Configuration.WorldSize = c.WorldSize;
-                Configuration.CreatureTextureSize = c.CreatureTextureSize;
-                Configuration.WorldTextureSize = c.WorldTextureSize;
-                Configuration.KillCount = c.KillCount;
-                Configuration.UpdateTime = c.UpdateTime;
-                Configuration.WillNucleotideMutateMax = c.WillNucleotideMutateMax;
-                Configuration.WillOrganismMutateMax = c.WillOrganismMutateMax;
-                Configuration.WillHaveChildMax = c.WillHaveChildMax;
-                Configuration.HowManyChildren = c.HowManyChildren;
-                Configuration.WorldColor = c.WorldColor;
+                MapConfigurationInstance(c);
             }
         }
 
-        public static Color WorldColor { get; }
+        private static void MapConfigurationInstance(ConfigurationInstance c)
+        {
+            Configuration.DnaSize = c.DnaSize;
+            Configuration.WorldSize = c.WorldSize;
+            Configuration.CreatureTextureSize = c.CreatureTextureSize;
+            Configuration.WorldTextureSize = c.WorldTextureSize;
+            Configuration.KillCount = c.KillCount;
+            Configuration.UpdateTime = c.UpdateTime;
+            Configuration.WillNucleotideMutateMax = c.WillNucleotideMutateMax;
+            Configuration.WillOrganismMutateMax = c.WillOrganismMutateMax;
+            Configuration.WillHaveChildMax = c.WillHaveChildMax;
+            Configuration.HowManyChildren = c.HowManyChildren;
+            Configuration.WorldColor = c.WorldColor;
+        }
 
-        public static int DnaSize { get; }
-        public static Position WorldSize { get; } 
-        public static Position CreatureTextureSize { get; } 
-        public static Position WorldTextureSize { get; } 
-
-        public static Texture2D DefaultCreatureTexture { get; private set; }
-        public static Texture2D DefaultWorldTexture { get; private set; }
-        public static SpriteFont DefaultApplicationFont { get; private set; }
-
+        public static Color WorldColor { get; set; }
+        public static Position WorldSize { get; set; } 
+        public static int DnaSize { get; private set; }
+        public static Position CreatureTextureSize { get; private set; } 
+        public static Position WorldTextureSize { get; private set; } 
         public static int KillCount { get; set; } 
         public static TimeSpan UpdateTime { get; set; }
         public static int WillNucleotideMutateMax { get; set; } 
         public static int WillOrganismMutateMax { get; set; }
         public static int WillHaveChildMax { get; set; } 
         public static int HowManyChildren { get; set; }
+        public static Texture2D DefaultCreatureTexture { get; private set; }
+        public static Texture2D DefaultWorldTexture { get; private set; }
+        public static SpriteFont DefaultApplicationFont { get; private set; }
 
         public static void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
@@ -78,8 +78,8 @@ namespace ESim.Config
                                                                             Color.White);
 
             Configuration.DefaultWorldTexture = graphicsDevice.Generate(Configuration.WorldTextureSize.X,
-                                                            Configuration.WorldTextureSize.Y,
-                                                            Color.Aquamarine);
+                                                                        Configuration.WorldTextureSize.Y,
+                                                                        Color.Aquamarine);
 
             Configuration.DefaultApplicationFont = content.Load<SpriteFont>("fonts/PTSans10");
         }
