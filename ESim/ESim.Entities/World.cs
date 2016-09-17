@@ -2,83 +2,14 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SandS.Algorithm.Library.PositionNamespace;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace ESim.Entities
 {
-    public static class ColorComparer
-    {
-        public static double Compare(Color lhs, Color rhs)
-        {
-            int dR = lhs.R - rhs.R;
-            int dG = lhs.G - rhs.G;
-            int dB = lhs.B - rhs.B;
-
-            return Math.Sqrt(dR * dR + dG * dG + dB * dB);
-        }
-    }
-
-    public static class A
-    {
-        public static T ClosestTo<T>(this IList<T> inputCollection, T target)
-            where T : IComparable
-        {
-            T closest = default(T);
-            int minDifference = int.MaxValue;
-            foreach (var element in inputCollection)
-            {
-                int difference = element.CompareTo(target);
-
-                if (minDifference > difference)
-                {
-                    minDifference = (int)difference;
-                    closest = element;
-                }
-            }
-
-            return closest;
-        }
-
-        public static KeyValuePair<T, int> ClosestTo<T>(this IList<T> inputCollection, T target, IComparer<T> comparer)
-        {
-            T closest = default(T);
-            int minDifference = int.MaxValue;
-
-            int pos = 0;
-
-            for (int i = 0; i < inputCollection.Count; i++)
-            {
-                T element = inputCollection[i];
-
-                int difference = comparer.Compare(element, target);
-
-                if (minDifference > difference)
-                {
-                    minDifference = (int)difference;
-                    closest = element;
-                    pos = i;
-                }
-            }
-
-            return new KeyValuePair<T, int>(closest, pos);
-        }
-    }
-
     public class World
     {
-        private void DestroySomeCreatures()
-        {
-            var oc = this.Creatures.OrderBy(c => ColorComparer.Compare(this.Color, c.Color)).ToList();
-
-            for (int i = this.Creatures.Count - 1; i > this.Creatures.Count - Configuration.KillCount; i--)
-            {
-                oc[i].Kill();
-            }
-        }
-
         private readonly Queue<Creature> creatureReproductionQueue;
 
         public World(Color color)
@@ -90,50 +21,68 @@ namespace ESim.Entities
             this.creatureReproductionQueue = new Queue<Creature>(this.Size.X * this.Size.Y);
         }
 
-        private IList<Creature> InitCreatures()
-        {
-            int v = this.Size.X * this.Size.Y;
-
-            List<Creature> creatures = new List<Creature>(v);
-
-            for (int i = 0; i < v; i++)
-            {
-                Position position = this.GetPosition(i);
-
-                var creature = new Creature(position);
-
-                creatures.Add(creature);
-            }
-
-            return creatures;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Position GetPosition(int i)
-        {
-            Position pos = new Position();
-
-            pos.X = i / Configuration.WorldSize.X;
-            pos.Y = i % Configuration.WorldSize.X;
-
-            return pos;
-        }
-
-        public Position Size { get; set; }
+        public Color Color { get; set; }
 
         public IList<Creature> Creatures { get; private set; }
 
-        public Color Color { get; set; }
+        public Position Size { get; set; }
 
-        public void Update(GameTime gameTime)
+        public void Draw(SpriteBatch spriteBatch)
         {
-            this.DestroySomeCreatures();
+            spriteBatch.Draw(Configuration.DefaultWorldTexture, Vector2.Zero, this.Color);
+
+            foreach (var creature in this.Creatures.Where(creature => creature.IsAlive))
+            {
+                creature.Draw(spriteBatch);
+            }
+        }
+
+        public void Update()
+        {
+            this.DestroyLessAdaptedCreatures();
 
             this.FillQueue();
 
             this.ProcessQueue();
 
             this.FillSpace();
+        }
+
+        private static Dna HybridizateDna(Creature mother, Creature father, Creature child)
+        {
+            Dna dna = new Dna();
+
+            for (int i = 0; i < child.Dna.Values.Length; i++)
+            {
+                dna.Values[i] = mother.Dna.Values[i] & father.Dna.Values[i];
+            }
+
+            return dna;
+        }
+
+        private static Creature MakeChild(Creature mother, Creature father)
+        {
+            Creature child = new Creature(mother.Position);
+            child.Dna = HybridizateDna(mother, father, child);
+            child.IsAlive = true;
+
+            child.RefreshColor(); // TODO refactor
+
+            return child;
+        }
+
+        private void DestroyLessAdaptedCreatures()
+        {
+            IList<Creature> lessAdaptedCreatures = this.Creatures
+                                                        .OrderBy(c => ColorComparer.Compare(this.Color, c.Color)) // I can't use IComparer overload here: see comment in ColorComparer class
+                                                        .ToList();
+
+            for (int i = this.Creatures.Count - 1;
+                    i > this.Creatures.Count - Configuration.KillCount;
+                    i--)
+            {
+                lessAdaptedCreatures[i].Kill();
+            }
         }
 
         private void FillQueue()
@@ -161,30 +110,44 @@ namespace ESim.Entities
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private Position GetPosition(int value)
+        {
+            return new Position
+            {
+                X = value / Configuration.WorldSize.X,
+                Y = value % Configuration.WorldSize.X
+            };
+        }
+
+        private IList<Creature> InitCreatures()
+        {
+            int amount = this.Size.X * this.Size.Y;
+
+            IList<Creature> creatures = new List<Creature>(amount);
+
+            for (int i = 0; i < amount; i++)
+            {
+                Position position = this.GetPosition(i);
+
+                Creature creature = new Creature(position);
+
+                creatures.Add(creature);
+            }
+
+            return creatures;
+        }
+
         private void ProcessQueue()
         {
             while (this.creatureReproductionQueue.Count > 2)
             {
                 Creature father = this.creatureReproductionQueue.Dequeue();
                 Creature mother = this.creatureReproductionQueue.Dequeue();
+
                 for (int i = 0; i < Configuration.HowManyChildren; i++)
                 {
-                    Creature child = World.MakeChild(mother, father);
-
-                    child.Mutate();
-                    child.Mutate();
-                    child.Mutate();
-
-                    var firstDead = this.Creatures.FirstOrDefault(c => !c.IsAlive);
-
-                    if (firstDead == null)
-                    {
-                        return;
-                    }
-
-                    firstDead.Dna = child.Dna;
-                    firstDead.Spawn();
-                    firstDead.RefreshColor();
+                    Creature child = SpawnChild(father, mother);
                 }
 
                 if (!father.WillHaveChild())
@@ -199,38 +162,33 @@ namespace ESim.Entities
             }
         }
 
-        private static Creature MakeChild(Creature mother, Creature father)
-        {
-            var child = new Creature(mother.Position);
-
-            child.Dna = new Dna();
-
-            for (int i = 0; i < child.Dna.Values.Length; i++)
-            {
-                child.Dna.Values[i] = mother.Dna.Values[i] & father.Dna.Values[i];
-            }
-
-            child.RefreshColor();
-
-            child.IsAlive = true;
-
-            return child;
-        }
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void QueueChild(Creature creature)
         {
             this.creatureReproductionQueue.Enqueue(creature);
         }
 
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
+        private Creature SpawnChild(Creature father, Creature mother)
         {
-            spriteBatch.Draw(Configuration.DefaultWorldTexture, Vector2.Zero, this.Color);
+            Creature child = World.MakeChild(mother, father);
 
-            foreach (var creature in this.Creatures.Where(creature => creature.IsAlive))
+            for (int i = 0; i < Configuration.HowManyTimesCreatureMutateAfterBirth; i++)
             {
-                creature.Draw(gameTime, spriteBatch);
+                child.Mutate();
             }
+
+            Creature firstDead = this.Creatures.FirstOrDefault(c => !c.IsAlive);
+
+            if (firstDead == null)
+            {
+                return null;
+            }
+
+            firstDead.Dna = child.Dna;
+            firstDead.Spawn();
+            firstDead.RefreshColor();
+
+            return child;
         }
     }
 }

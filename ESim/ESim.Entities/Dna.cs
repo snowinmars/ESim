@@ -12,9 +12,17 @@ namespace ESim.Entities
 
         public bool[] Values { get; private set; }
 
+        public void Reset()
+        {
+            for (int i = 0; i < this.Values.Length; i++)
+            {
+                this.Values[i] = false;
+            }
+        }
+
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder(256);
+            StringBuilder sb = new StringBuilder(Configuration.DnaSize);
 
             foreach (bool v in this.Values)
             {
@@ -22,14 +30,6 @@ namespace ESim.Entities
             }
 
             return sb.ToString();
-        }
-
-        public void Reset()
-        {
-            for (int i = 0; i < this.Values.Length; i++)
-            {
-                this.Values[i] = false;
-            }
         }
     }
 }

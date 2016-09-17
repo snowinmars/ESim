@@ -13,6 +13,7 @@ namespace Esim.MonoGame
     public class Game1 : Game
     {
         private GraphicsDeviceManager graphics;
+        private TimeSpan previousGameTime;
         private SpriteBatch spriteBatch;
         private World world;
 
@@ -23,6 +24,21 @@ namespace Esim.MonoGame
         }
 
         /// <summary>
+        /// This is called when the game should draw itself.
+        /// </summary>
+        /// <param name="gameTime">Provides a snapshot of timing values.</param>
+        protected override void Draw(GameTime gameTime)
+        {
+            this.spriteBatch.Begin();
+
+            this.world.Draw(this.spriteBatch);
+
+            this.spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+        /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
         /// related content.  Calling base.Initialize will enumerate through any components
@@ -30,8 +46,6 @@ namespace Esim.MonoGame
         /// </summary>
         protected override void Initialize()
         {
-            // Add your initialization logic here
-
             this.world = new World(Configuration.WorldColor);
 
             base.Initialize();
@@ -43,11 +57,8 @@ namespace Esim.MonoGame
         /// </summary>
         protected override void LoadContent()
         {
-            // Create a new SpriteBatch, which can be used to draw textures.
             this.spriteBatch = new SpriteBatch(this.GraphicsDevice);
             Configuration.LoadContent(this.GraphicsDevice, this.Content);
-
-            // use this.Content to load your game content here
         }
 
         /// <summary>
@@ -56,12 +67,8 @@ namespace Esim.MonoGame
         /// </summary>
         protected override void UnloadContent()
         {
-            // Unload any non ContentManager content here
-
             Configuration.UnloadContent();
         }
-
-        private TimeSpan previousGameTime;
 
         /// <summary>
         /// Allows the game to run logic such as updating the world,
@@ -70,39 +77,22 @@ namespace Esim.MonoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            {
                 this.Exit();
-
-            // Add your update logic here
-
-            if (true || this.previousGameTime > Configuration.UpdateTime)
-            {
-                this.previousGameTime = TimeSpan.Zero;
-                this.world.Update(gameTime);
             }
-            else
+
+            //if (this.previousGameTime > Configuration.UpdateTime)
             {
-                this.previousGameTime += gameTime.ElapsedGameTime;
+                //this.previousGameTime = TimeSpan.Zero;
+                this.world.Update();
             }
+            //else
+            //{
+            //    this.previousGameTime += gameTime.ElapsedGameTime;
+            //}
 
             base.Update(gameTime);
-        }
-
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime)
-        {
-            // Add your drawing code here
-
-            this.spriteBatch.Begin();
-
-            this.world.Draw(gameTime, this.spriteBatch);
-
-            this.spriteBatch.End();
-
-            base.Draw(gameTime);
         }
     }
 }

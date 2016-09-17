@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ESim.Config;
+﻿using ESim.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using SandS.Algorithm.CommonNamespace;
-using SandS.Algorithm.Library.PositionNamespace;
 using SandS.Algorithm.Library.BitwiseNamespace;
+using SandS.Algorithm.Library.PositionNamespace;
+using System.Linq;
 
 namespace ESim.Entities
 {
@@ -22,35 +18,26 @@ namespace ESim.Entities
             this.RefreshColor();
         }
 
+        public Color Color { get; private set; }
+        public Dna Dna { get; set; }
+        public bool IsAlive { get; set; }
         public Position Position { get; set; }
 
-        public bool IsAlive { get; set; }
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            var texturePosition = this.Position * Configuration.CreatureTextureSize;
 
-        public Dna Dna { get; set; }
+            spriteBatch.Draw(Configuration.DefaultCreatureTexture, texturePosition.ToVector2(), this.Color);
+
+            if (Configuration.HaveToDrawText)
+            {
+                spriteBatch.DrawString(Configuration.DefaultApplicationFont, this.Dna.ToString(), texturePosition.ToVector2(), Color.White);
+            }
+        }
 
         public void Kill()
         {
             this.IsAlive = false;
-        }
-
-        public void Spawn()
-        {
-            this.IsAlive = true;
-        }
-
-        public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
-        {
-            var texturePosition = this.Position* Configuration.CreatureTextureSize;
-
-            spriteBatch.Draw(Configuration.DefaultCreatureTexture, texturePosition.ToVector2(), this.Color);
-            spriteBatch.DrawString(Configuration.DefaultApplicationFont, this.Dna.ToString(), texturePosition.ToVector2(), Color.White);
-        }
-
-        public Color Color { get; private set; }
-
-        public bool WillHaveChild()
-        {
-            return CommonValues.Random.Next(0, Configuration.WillHaveChildMax) == 0;
         }
 
         public void Mutate()
@@ -60,6 +47,30 @@ namespace ESim.Entities
                 return;
             }
 
+            this.MutateImpl();
+        }
+
+        public void Spawn()
+        {
+            this.IsAlive = true;
+        }
+
+        public bool WillHaveChild()
+        {
+            return CommonValues.Random.Next(0, Configuration.WillHaveChildMax) == 0;
+        }
+
+        internal void RefreshColor()
+        {
+            int r = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Take(8).ToArray()); // TODO refactor
+            int g = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(8).Take(8).ToArray());
+            int b = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(16).Take(8).ToArray());
+
+            this.Color = new Color(r, g, b, 255);
+        }
+
+        private void MutateImpl()
+        {
             bool was = false;
 
             for (int i = 0; i < this.Dna.Values.Length; i++)
@@ -73,17 +84,8 @@ namespace ESim.Entities
 
             if (was)
             {
-                this.RefreshColor();
+                this.RefreshColor(); // TODO refactor
             }
-        }
-
-        internal void RefreshColor()
-        {
-            int r = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Take(8).ToArray());
-            int g = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(8).Take(8).ToArray());
-            int b = (int)BitwiseOperation.BitsToNumber(this.Dna.Values.Skip(16).Take(8).ToArray());
-
-            this.Color = new Color(r, g, b, 255);
         }
 
         private bool WillNucleotideMutate()

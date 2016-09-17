@@ -11,21 +11,6 @@ namespace ESim.Config
 {
     public static class Configuration
     {
-        public class ConfigurationInstance
-        {
-            public int DnaSize { get; set; }
-            public Position WorldSize { get; set; }
-            public Position CreatureTextureSize { get; set; }
-            public Position WorldTextureSize { get; set; }
-            public int KillCount { get; set; }
-            public TimeSpan UpdateTime { get; set; }
-            public int WillNucleotideMutateMax { get; set; }
-            public int WillOrganismMutateMax { get; set; }
-            public int WillHaveChildMax { get; set; }
-            public int HowManyChildren { get; set; }
-            public Color WorldColor { get; set; }
-        }
-
         static Configuration()
         {
             using (StreamReader reader = new StreamReader(@"cfg\esim.cfg"))
@@ -36,35 +21,33 @@ namespace ESim.Config
             }
         }
 
-        private static void MapConfigurationInstance(ConfigurationInstance c)
-        {
-            Configuration.DnaSize = c.DnaSize;
-            Configuration.WorldSize = c.WorldSize;
-            Configuration.CreatureTextureSize = c.CreatureTextureSize;
-            Configuration.WorldTextureSize = c.WorldTextureSize;
-            Configuration.KillCount = c.KillCount;
-            Configuration.UpdateTime = c.UpdateTime;
-            Configuration.WillNucleotideMutateMax = c.WillNucleotideMutateMax;
-            Configuration.WillOrganismMutateMax = c.WillOrganismMutateMax;
-            Configuration.WillHaveChildMax = c.WillHaveChildMax;
-            Configuration.HowManyChildren = c.HowManyChildren;
-            Configuration.WorldColor = c.WorldColor;
-        }
+        public static Position CreatureTextureSize { get; private set; }
+
+        public static SpriteFont DefaultApplicationFont { get; private set; }
+
+        public static Texture2D DefaultCreatureTexture { get; private set; }
+
+        public static Texture2D DefaultWorldTexture { get; private set; }
+
+        public static int DnaSize { get; private set; }
+        public static bool HaveToDrawText { get; set; }
+        public static int HowManyChildren { get; set; }
+        public static int HowManyTimesCreatureMutateAfterBirth { get; set; }
+        public static int KillCount { get; set; }
+
+        public static TimeSpan UpdateTime { get; set; }
+
+        public static int WillHaveChildMax { get; set; }
+
+        public static int WillNucleotideMutateMax { get; set; }
+
+        public static int WillOrganismMutateMax { get; set; }
 
         public static Color WorldColor { get; set; }
+
         public static Position WorldSize { get; set; }
-        public static int DnaSize { get; private set; }
-        public static Position CreatureTextureSize { get; private set; }
+
         public static Position WorldTextureSize { get; private set; }
-        public static int KillCount { get; set; }
-        public static TimeSpan UpdateTime { get; set; }
-        public static int WillNucleotideMutateMax { get; set; }
-        public static int WillOrganismMutateMax { get; set; }
-        public static int WillHaveChildMax { get; set; }
-        public static int HowManyChildren { get; set; }
-        public static Texture2D DefaultCreatureTexture { get; private set; }
-        public static Texture2D DefaultWorldTexture { get; private set; }
-        public static SpriteFont DefaultApplicationFont { get; private set; }
 
         public static void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
@@ -82,6 +65,40 @@ namespace ESim.Config
         public static void UnloadContent()
         {
             Configuration.DefaultCreatureTexture.Dispose();
+        }
+
+        private static void MapConfigurationInstance(ConfigurationInstance c)
+        {
+            Configuration.DnaSize = c.DnaSize;
+            Configuration.WorldSize = c.WorldSize;
+            Configuration.CreatureTextureSize = c.CreatureTextureSize;
+            Configuration.WorldTextureSize = c.WorldTextureSize;
+            Configuration.KillCount = c.KillCount;
+            Configuration.UpdateTime = c.UpdateTime;
+            Configuration.WillNucleotideMutateMax = c.WillNucleotideMutateMax;
+            Configuration.WillOrganismMutateMax = c.WillOrganismMutateMax;
+            Configuration.WillHaveChildMax = c.WillHaveChildMax;
+            Configuration.HowManyChildren = c.HowManyChildren;
+            Configuration.WorldColor = c.WorldColor;
+            Configuration.HaveToDrawText = c.HaveToDrawText;
+            Configuration.HowManyTimesCreatureMutateAfterBirth = c.HowManyTimesCreatureMutateAfterBirth;
+        }
+
+        public class ConfigurationInstance
+        {
+            public Position CreatureTextureSize { get; set; }
+            public int DnaSize { get; set; }
+            public bool HaveToDrawText { get; set; }
+            public int HowManyChildren { get; set; }
+            public int HowManyTimesCreatureMutateAfterBirth { get; set; }
+            public int KillCount { get; set; }
+            public TimeSpan UpdateTime { get; set; }
+            public int WillHaveChildMax { get; set; }
+            public int WillNucleotideMutateMax { get; set; }
+            public int WillOrganismMutateMax { get; set; }
+            public Color WorldColor { get; set; }
+            public Position WorldSize { get; set; }
+            public Position WorldTextureSize { get; set; }
         }
     }
 }
