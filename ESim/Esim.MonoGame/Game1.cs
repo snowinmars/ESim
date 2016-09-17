@@ -1,10 +1,9 @@
-﻿using System;
-using ESim.Config;
+﻿using ESim.Config;
 using ESim.Entities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System;
 
 namespace Esim.MonoGame
 {
@@ -95,8 +94,6 @@ namespace Esim.MonoGame
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            
-
             // Add your drawing code here
 
             this.spriteBatch.Begin();

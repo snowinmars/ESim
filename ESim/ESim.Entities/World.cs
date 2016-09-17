@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Globalization;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Channels;
-using System.Text;
-using System.Threading;
-using ESim.Config;
-using Mathos.Converter;
+﻿using ESim.Config;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using SandS.Algorithm.CommonNamespace;
-using SandS.Algorithm.Library.BitwiseNamespace;
 using SandS.Algorithm.Library.PositionNamespace;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace ESim.Entities
 {
@@ -26,7 +17,7 @@ namespace ESim.Entities
             int dG = lhs.G - rhs.G;
             int dB = lhs.B - rhs.B;
 
-            return Math.Sqrt(dR * dR + dG * dG + dB * dB );
+            return Math.Sqrt(dR * dR + dG * dG + dB * dB);
         }
     }
 
@@ -66,7 +57,7 @@ namespace ESim.Entities
 
                 if (minDifference > difference)
                 {
-                    minDifference = (int) difference;
+                    minDifference = (int)difference;
                     closest = element;
                     pos = i;
                 }
@@ -122,8 +113,8 @@ namespace ESim.Entities
         {
             Position pos = new Position();
 
-            pos.X = i/Configuration.WorldSize.X;
-            pos.Y = i%Configuration.WorldSize.X;
+            pos.X = i / Configuration.WorldSize.X;
+            pos.Y = i % Configuration.WorldSize.X;
 
             return pos;
         }

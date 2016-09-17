@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
-using SandS.Algorithm.Library.PositionNamespace;
 using SandS.Algorithm.Extensions.GraphicsDeviceExtensionNamespace;
+using SandS.Algorithm.Library.PositionNamespace;
+using System;
+using System.IO;
 
 namespace ESim.Config
 {
-
     public static class Configuration
     {
         public class ConfigurationInstance
@@ -57,15 +52,15 @@ namespace ESim.Config
         }
 
         public static Color WorldColor { get; set; }
-        public static Position WorldSize { get; set; } 
+        public static Position WorldSize { get; set; }
         public static int DnaSize { get; private set; }
-        public static Position CreatureTextureSize { get; private set; } 
-        public static Position WorldTextureSize { get; private set; } 
-        public static int KillCount { get; set; } 
+        public static Position CreatureTextureSize { get; private set; }
+        public static Position WorldTextureSize { get; private set; }
+        public static int KillCount { get; set; }
         public static TimeSpan UpdateTime { get; set; }
-        public static int WillNucleotideMutateMax { get; set; } 
+        public static int WillNucleotideMutateMax { get; set; }
         public static int WillOrganismMutateMax { get; set; }
-        public static int WillHaveChildMax { get; set; } 
+        public static int WillHaveChildMax { get; set; }
         public static int HowManyChildren { get; set; }
         public static Texture2D DefaultCreatureTexture { get; private set; }
         public static Texture2D DefaultWorldTexture { get; private set; }
