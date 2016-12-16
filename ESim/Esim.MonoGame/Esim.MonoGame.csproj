@@ -13,7 +13,7 @@
     <AssemblyName>Esim.MonoGame</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MonoGamePlatform>DesktopGL</MonoGamePlatform>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -45,12 +45,37 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="EmptyKeys.UserInterface, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.CocosSharp, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\CocosSharp\AnyCPU\EmptyKeys.UserInterface.CocosSharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Core, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Debug, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Common\AnyCPU\EmptyKeys.UserInterface.Debug.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.FNA, Version=2.5.0.0, Culture=neutral, processorArchitecture=x86">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FNA\x86\EmptyKeys.UserInterface.FNA.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.MonoGame, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\MonoGame\AnyCPU\EmptyKeys.UserInterface.MonoGame.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EmptyKeys.UserInterface.Xenko, Version=2.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\EmptyKeysUI.2.5.0.0\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\Xenko\AnyCPU\EmptyKeys.UserInterface.Xenko.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
-    </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\OpenTK.dll</HintPath>
     </Reference>
     <Reference Include="NVorbis">
       <HintPath>$(MonoGameInstallDirectory)\MonoGame\v3.0\Assemblies\DesktopGL\NVorbis.dll</HintPath>

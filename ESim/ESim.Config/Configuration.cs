@@ -17,8 +17,11 @@ namespace ESim.Config
             {
                 string str = reader.ReadToEnd();
                 ConfigurationInstance c = JsonConvert.DeserializeObject<ConfigurationInstance>(str);
-                MapConfigurationInstance(c);
+                Configuration.MapConfigurationInstance(c);
             }
+
+            Configuration.WorldTextureSize = new Position(Configuration.WorldSize.Y * (Configuration.CreatureTextureSize.X + 5),
+                                                            Configuration.WorldSize.X * (Configuration.CreatureTextureSize.Y + 5) + 20);
         }
 
         public static Position CreatureTextureSize { get; private set; }
@@ -47,7 +50,7 @@ namespace ESim.Config
 
         public static Position WorldSize { get; set; }
 
-        public static Position WorldTextureSize { get; private set; }
+        public static Position WorldTextureSize { get; private set; } 
 
         public static void LoadContent(GraphicsDevice graphicsDevice, ContentManager content)
         {
@@ -72,7 +75,6 @@ namespace ESim.Config
             Configuration.DnaSize = c.DnaSize;
             Configuration.WorldSize = c.WorldSize;
             Configuration.CreatureTextureSize = c.CreatureTextureSize;
-            Configuration.WorldTextureSize = c.WorldTextureSize;
             Configuration.KillCount = c.KillCount;
             Configuration.UpdateTime = c.UpdateTime;
             Configuration.WillNucleotideMutateMax = c.WillNucleotideMutateMax;
@@ -98,7 +100,6 @@ namespace ESim.Config
             public int WillOrganismMutateMax { get; set; }
             public Color WorldColor { get; set; }
             public Position WorldSize { get; set; }
-            public Position WorldTextureSize { get; set; }
         }
     }
 }

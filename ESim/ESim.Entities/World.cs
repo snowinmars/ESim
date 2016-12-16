@@ -5,17 +5,20 @@ using SandS.Algorithm.Library.PositionNamespace;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 namespace ESim.Entities
 {
     public class World
     {
         private readonly Queue<Creature> creatureReproductionQueue;
+        public long generationCount { get; internal set; }
 
         public World(Color color)
         {
             this.Color = color;
             this.Size = Configuration.WorldSize;
+            this.generationCount = 0;
 
             this.Creatures = this.InitCreatures();
             this.creatureReproductionQueue = new Queue<Creature>(this.Size.X * this.Size.Y);
@@ -46,6 +49,8 @@ namespace ESim.Entities
             this.ProcessQueue();
 
             this.FillSpace();
+
+            ++this.generationCount;
         }
 
         private static Dna HybridizateDna(Creature mother, Creature father, Creature child)
