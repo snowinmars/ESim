@@ -16,7 +16,7 @@ namespace Esim.MonoGame
         private TimeSpan previousGameTime;
         private SpriteBatch spriteBatch;
         private World world;
-        private IUI UI;
+        //private IUI UI;
 
         public Game1()
         {
@@ -34,8 +34,8 @@ namespace Esim.MonoGame
 
             this.spriteBatch.Begin();
 
-            //this.world.Draw(this.spriteBatch);
-            this.UI.Draw(this.spriteBatch);
+            this.world.Draw(this.spriteBatch);
+            //this.UI.Draw(this.spriteBatch);
 
             this.spriteBatch.End();
 
@@ -51,7 +51,7 @@ namespace Esim.MonoGame
         protected override void Initialize()
         {
             this.world = new World(Configuration.WorldColor);
-            this.UI = new WindowsFormUI(this.world);
+            //this.UI = new WindowsFormUI(this.world);
 
             base.Initialize();
         }
@@ -90,8 +90,8 @@ namespace Esim.MonoGame
             //if (this.previousGameTime > Configuration.UpdateTime)
             {
                 //this.previousGameTime = TimeSpan.Zero;
-                //this.world.Update();
-                this.UI.Update();
+                this.world.Update();
+                //this.UI.Update();
             }
             //else
             //{
